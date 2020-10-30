@@ -1,8 +1,9 @@
 <template>
   <div class="container">
     <global-header :user="currentUser"></global-header>
+    <router-view></router-view>
     <!-- <column-list :list='list'></column-list> -->
-    <validate-form @form-submit="onFormSubmit">
+    <!-- <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">Email Address</label>
         <validate-input
@@ -25,7 +26,8 @@
       <template #submit>
         <span class="btn btn-danger">Submit</span>
       </template>
-    </validate-form>
+    </validate-form> -->
+    <global-footer></global-footer>
   </div>
 </template>
 
@@ -34,8 +36,9 @@ import { defineComponent, ref } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 // import ColumnList, { ColumnProps } from '@/components/ComlumnList.vue'
 import GlobalHeader, { UserProps } from '@/components/GlobalHeader.vue'
-import ValidateInput, { RulesProp } from '@/components/ValidateInput.vue'
-import ValidateForm from '@/components/ValidateForm.vue'
+import GlobalFooter from '@/components/GlobalFooter.vue'
+// import ValidateInput, { RulesProp } from '@/components/ValidateInput.vue'
+// import ValidateForm from '@/components/ValidateForm.vue'
 // const testData: ColumnProps[] = [
 //   {
 //     id: 1,
@@ -64,7 +67,7 @@ import ValidateForm from '@/components/ValidateForm.vue'
 // ]
 
 const currentUser: UserProps = {
-  isLogin: true,
+  isLogin: false,
   name: 'Skylar'
 }
 
@@ -73,35 +76,35 @@ export default defineComponent({
   components: {
     // ColumnList,
     GlobalHeader,
-    ValidateInput,
-    ValidateForm
+    // ValidateInput,
+    // ValidateForm,
+    GlobalFooter
   },
   setup() {
-    const inputRef = ref<any>()
-    const emailVal = ref('')
-    const emailRules: RulesProp = [
-      { type: 'required', message: 'The email can not be empty.' },
-      { type: 'email', message: 'Please enter a valid email.' }
-    ]
-    const passwordVal = ref('')
-    const passwordRules: RulesProp = [
-      { type: 'required', message: 'The password can not be empty' }
-    ]
+    // const inputRef = ref<any>()
+    // const emailVal = ref('')
+    // const emailRules: RulesProp = [
+    //   { type: 'required', message: 'The email can not be empty.' },
+    //   { type: 'email', message: 'Please enter a valid email.' }
+    // ]
+    // const passwordVal = ref('')
+    // const passwordRules: RulesProp = [
+    //   { type: 'required', message: 'The password can not be empty' }
+    // ]
 
-    const onFormSubmit = (result: boolean) => {
-      // TODO: next
-      console.log('result', result)
-    }
+    // const onFormSubmit = (result: boolean) => {
+    //   // TODO: next
+    // }
 
     return {
-      // list: testData,
-      currentUser: currentUser,
-      emailRules,
-      emailVal,
-      passwordVal,
-      passwordRules,
-      onFormSubmit,
-      inputRef
+    //   // list: testData,
+      currentUser: currentUser
+    //   emailRules,
+    //   emailVal,
+    //   passwordVal,
+    //   passwordRules,
+    //   onFormSubmit,
+    //   inputRef
     }
   }
 })

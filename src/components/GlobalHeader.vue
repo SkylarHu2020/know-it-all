@@ -1,9 +1,9 @@
 <template>
   <nav class="navbar navbar-dark bg-primary justify-content-between mb-4 px-4">
-    <a class="navbar-brand" href="#">Know it all</a>
+    <router-link class="navbar-brand" to="/">Know it all</router-link>
     <ul v-if="!user.isLogin" class="list-inline mb-0">
-      <li class="list-inline-item"><a href="#" class="btn btn-outline-light my-2">Sign In</a></li>
-      <li class="list-inline-item"><a href="#" class="btn btn-outline-light my-2">Sign Up</a></li>
+      <li class="list-inline-item"><router-link to="/login" class="btn btn-outline-light my-2">Sign In</router-link></li>
+      <li class="list-inline-item"><router-link to="/login" class="btn btn-outline-light my-2">Sign Up</router-link></li>
     </ul>
     <ul v-else class="list-inline mb-0">
       <li class="list-inline-item">
