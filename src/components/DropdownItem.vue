@@ -20,7 +20,8 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style>
+/* 这里*的意思是所有子items的style */
 .dropdown-option.is-disabled * {
     color: #6c757d;
     pointer-events: none;

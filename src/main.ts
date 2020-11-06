@@ -20,7 +20,6 @@ const store = createStore({
 console.log('store', store.state.count)
 store.commit('add')
 console.log('store', store.state.count)
-
 const router = createRouter({
   history: routerHistory,
   routes: [

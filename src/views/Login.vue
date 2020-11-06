@@ -21,7 +21,7 @@
         />
       </div>
       <template #submit>
-        <span class="btn btn-danger">Submit</span>
+        <span class="btn btn-primary">Submit</span>
       </template>
     </validate-form>
   </div>

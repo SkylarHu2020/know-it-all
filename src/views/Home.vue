@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import ColumnList, { ColumnProps } from '@/components/ComlumnList.vue'
+import ColumnList, { ColumnProps } from '@/components/ColumnList.vue'
 const testData: ColumnProps[] = [
   {
     id: 1,

@@ -9,7 +9,7 @@
       <li class="list-inline-item">
         <dropdown :title="`Hi ${user.name}`">
           <dropdown-item><a href="#" class="dropdown-item">New Essay</a></dropdown-item>
-          <dropdown-item><a href="#" class="dropdown-item">Edit Accout</a></dropdown-item>
+          <dropdown-item><a href="#" class="dropdown-item">Edit Info</a></dropdown-item>
           <dropdown-item><a href="#" class="dropdown-item">Sign Out</a></dropdown-item>
         </dropdown>
       </li>

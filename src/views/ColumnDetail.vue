@@ -18,6 +18,7 @@ import { defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { testData, testPosts } from '../testData'
 import PostList from '../components/PostList.vue'
+import { ColumnProps } from '@/components/ColumnList.vue'
 
 export default defineComponent({
   components: {
@@ -26,7 +27,7 @@ export default defineComponent({
   setup() {
     const route = useRoute()
     const currentId = +route.params.id
-    const column = testData.find(c => c.id === currentId)
+    const column = testData.find(c => c.id === currentId) as ColumnProps
     const list = testPosts.filter(post => post.columnId === currentId)
     return {
       column,
