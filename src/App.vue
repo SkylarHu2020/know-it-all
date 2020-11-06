@@ -1,31 +1,35 @@
 <template>
   <div class="container">
     <global-header :user="currentUser"></global-header>
+    <loader v-if="isLoading"></loader>
     <router-view></router-view>
     <global-footer></global-footer>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import GlobalHeader, { UserProps } from '@/components/GlobalHeader.vue'
+import GlobalHeader from '@/components/GlobalHeader.vue'
 import GlobalFooter from '@/components/GlobalFooter.vue'
-
-const currentUser: UserProps = {
-  isLogin: false,
-  name: 'Skylar'
-}
+import { useStore } from 'vuex'
+import { GlobalDataProps } from './store'
+import Loader from '@/components/Loader.vue'
 
 export default defineComponent({
   name: 'App',
   components: {
     GlobalHeader,
-    GlobalFooter
+    GlobalFooter,
+    Loader
   },
   setup() {
+    const store = useStore<GlobalDataProps>()
+    const currentUser = computed(() => store.state.user)
+    const isLoading = computed(() => store.state.loading)
     return {
-      currentUser: currentUser
+      currentUser,
+      isLoading
     }
   }
 })

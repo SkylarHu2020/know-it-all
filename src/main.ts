@@ -1,44 +1,24 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import { createRouter, createWebHistory } from 'vue-router'
-import { createStore } from 'vuex'
-import Home from '@/views/Home.vue'
-import Login from '@/views/Login.vue'
-import ColumnDetail from '@/views/ColumnDetail.vue'
+import router from '@/router.ts'
+import store from '@/store.ts'
+import axios from 'axios'
 
-const routerHistory = createWebHistory()
-const store = createStore({
-  state: {
-    count: 0
-  },
-  mutations: {
-    add (state) {
-      state.count++
-    }
+axios.defaults.baseURL = 'http://apis.imooc.com/api'
+axios.interceptors.request.use(config => {
+  config.params = {
+    ...config.params,
+    icode: 'E2809197D1FD7200'
   }
+  store.commit('setLoading', true)
+  return config
 })
-console.log('store', store.state.count)
-store.commit('add')
-console.log('store', store.state.count)
-const router = createRouter({
-  history: routerHistory,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
-    },
-    {
-      path: '/column/:id',
-      name: 'column',
-      component: ColumnDetail
-    }
-  ]
+
+axios.interceptors.response.use(config => {
+  setTimeout(() => {
+    store.commit('setLoading', false)
+  }, 2000)
+  return config
 })
 
 const app = createApp(App)
