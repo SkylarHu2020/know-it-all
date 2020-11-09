@@ -12,6 +12,15 @@
         />
       </div>
       <div class="mb-3">
+        <label class="form-label">Nick Name</label>
+        <validate-input
+          :rules="nickNameRules"
+          v-model="nickNameVal"
+          placeholder="please enter your nick name"
+          type="text"
+        />
+      </div>
+      <div class="mb-3">
         <label class="form-label">Password</label>
         <validate-input
           type="password"
@@ -20,71 +29,95 @@
           v-model='passwordVal'
         />
       </div>
-      <template #submit>
-        <span class="btn btn-primary">Submit</span>
-      </template>
+      <div class="mb-3">
+        <label class="form-label">Confirm Password</label>
+        <validate-input
+          type="password"
+          placeholder="Please confirm your password"
+          :rules="confirmPasswordRules"
+          v-model='confirmPasswordVal'
+        />
+      </div>
     </validate-form>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-import ValidateInput, { RulesProp } from '@/components/ValidateInput.vue'
 import ValidateForm from '@/components/ValidateForm.vue'
+import ValidateInput, { RulesProp } from '@/components/ValidateInput.vue'
+import axios from 'axios'
+import { useRoute, useRouter } from 'vue-router'
 import createMessage from '@/components/createMessage.ts'
 
 export default defineComponent({
-  name: 'App',
+  name: 'Signup',
   components: {
-    ValidateInput,
-    ValidateForm
+    ValidateForm,
+    ValidateInput
   },
   setup() {
+    localStorage.removeItem('token')
     const inputRef = ref<any>()
-    const emailVal = ref('')
     const router = useRouter()
-    const store = useStore()
+    const emailVal = ref('')
     const emailRules: RulesProp = [
       { type: 'required', message: 'The email can not be empty.' },
       { type: 'email', message: 'Please enter a valid email.' }
+    ]
+    const nickNameVal = ref('')
+    const nickNameRules = [
+      { type: 'required', message: 'The nick name can not be empty' }
     ]
     const passwordVal = ref('')
     const passwordRules: RulesProp = [
       { type: 'required', message: 'The password can not be empty' }
     ]
-
+    const confirmPasswordVal = ref('')
+    const confirmPasswordRules: RulesProp = [
+      { type: 'required', message: 'The password can not be empty' },
+      {
+        type: 'custom',
+        validator: () => {
+          return confirmPasswordVal.value === passwordVal.value
+        },
+        message: 'The confirm password is not the same as password'
+      }
+    ]
     const onFormSubmit = async (result: boolean) => {
       if (result) {
         const payload = {
           email: emailVal.value,
+          nickName: nickNameVal.value,
           password: passwordVal.value
         }
         try {
-          await store.dispatch('login', payload)
-          await store.dispatch('fetchCurrentUser')
-          createMessage('Login successful!', 'success')
+          await axios.post('/users/', payload)
+          createMessage('Signup successful!', 'success')
           setTimeout(() => {
-            router.push('/')
+            router.push('/login')
           }, 2000)
         } catch (e) {
           console.log(e)
         }
       }
     }
-
     return {
-      emailRules,
+      inputRef,
       emailVal,
+      emailRules,
+      nickNameVal,
+      nickNameRules,
       passwordVal,
       passwordRules,
-      onFormSubmit,
-      inputRef
+      confirmPasswordVal,
+      confirmPasswordRules,
+      onFormSubmit
     }
   }
 })
 </script>
 
 <style>
+
 </style>

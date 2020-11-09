@@ -1,12 +1,12 @@
 import { createStore, Commit } from 'vuex'
 import axios from 'axios'
-import { resolveComponent } from 'vue'
 
-interface UserProps {
+export interface UserProps {
   isLogin: boolean;
-  name?: string;
-  id?: number;
-  columnId?: string;
+  nickName?: string;
+  _id?: string;
+  column?: string;
+  email?: string;
 }
 
 interface ImageProps {
@@ -32,7 +32,14 @@ export interface PostProps {
   column: string;
 }
 
+export interface GlobalErrorProps {
+  status: boolean;
+  message?: string;
+}
+
 export interface GlobalDataProps {
+  error: GlobalErrorProps;
+  token: string;
   loading: boolean;
   columns: ColumnProps[];
   posts: PostProps[];
@@ -41,14 +48,22 @@ export interface GlobalDataProps {
 
 const store = createStore<GlobalDataProps>({
   state: {
+    error: { status: false },
+    token: localStorage.getItem('token') || '',
     loading: false,
     columns: [],
     posts: [],
     user: { isLogin: false }
   },
   mutations: {
-    login(state) {
-      state.user = { ...state.user, isLogin: true, name: 'skylar', columnId: '1' }
+    login(state, rawData) {
+      const token = rawData.data.token
+      state.token = token
+      localStorage.setItem('token', token)
+      axios.defaults.headers.common.Authorization = `Bearer ${token}`
+    },
+    fetchCurrentUser(state, rawData) {
+      state.user = { isLogin: true, ...rawData.data }
     },
     createPost(state, newPost) {
       state.posts.push(newPost)
@@ -64,6 +79,9 @@ const store = createStore<GlobalDataProps>({
     },
     setLoading(state, status) {
       state.loading = status
+    },
+    setError(state, e: GlobalErrorProps) {
+      state.error = e
     }
   },
   actions: {
@@ -78,6 +96,14 @@ const store = createStore<GlobalDataProps>({
     async fetchPosts({ commit }, cid) {
       const { data } = await axios.get(`/columns/${cid}/posts`)
       commit('fetchPosts', data)
+    },
+    async login({ commit }, payload) {
+      const { data } = await axios.post('/user/login', payload)
+      commit('login', data)
+    },
+    async fetchCurrentUser({ commit }) {
+      const { data } = await axios.get('/user/current')
+      commit('fetchCurrentUser', data)
     }
   },
   getters: {
