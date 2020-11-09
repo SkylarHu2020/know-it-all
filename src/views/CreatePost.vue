@@ -1,6 +1,7 @@
 <template>
   <div class="create-post-page">
     <h4>New Essay</h4>
+    <input type="file" name="file" @change.prevent="handleFileChange"/>
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">Title: </label>
@@ -34,6 +35,7 @@ import { defineComponent, ref } from 'vue'
 import { GlobalDataProps, PostProps } from '../store'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import ValidateForm from '@/components/ValidateForm.vue'
 import ValidateInput, { RulesProp } from '@/components/ValidateInput.vue'
 
@@ -75,12 +77,27 @@ export default defineComponent({
         }
       }
     }
+    const handleFileChange = async (e: Event) => {
+      const target = e.target as HTMLInputElement
+      const files = target.files
+      if (files) {
+        const uploadedFile = files[0]
+        const formData = new FormData()
+        formData.append(uploadedFile.name, uploadedFile)
+        await axios.post('/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+      }
+    }
     return {
       titleVal,
       contentVal,
       titleRules,
       contentRules,
-      onFormSubmit
+      onFormSubmit,
+      handleFileChange
     }
   }
 })

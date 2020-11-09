@@ -57,7 +57,6 @@ export default defineComponent({
     ValidateInput
   },
   setup() {
-    localStorage.removeItem('token')
     const inputRef = ref<any>()
     const router = useRouter()
     const emailVal = ref('')
