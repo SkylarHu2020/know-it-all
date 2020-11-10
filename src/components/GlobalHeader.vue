@@ -10,7 +10,7 @@
         <dropdown :title="`Hi ${user.nickName}`">
           <dropdown-item><router-link to="/create" class="dropdown-item">New Essay</router-link></dropdown-item>
           <dropdown-item><a href="#" class="dropdown-item">Edit Info</a></dropdown-item>
-          <dropdown-item><a href="#" class="dropdown-item">Sign Out</a></dropdown-item>
+          <dropdown-item><a href="#" class="dropdown-item"><div @click="logout">Sign Out</div></a></dropdown-item>
         </dropdown>
       </li>
     </ul>
@@ -22,6 +22,7 @@ import { defineComponent, PropType } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
 import DropdownItem from '@/components/DropdownItem.vue'
 import { UserProps } from '../store'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'GlobalHeader',
@@ -33,6 +34,15 @@ export default defineComponent({
     user: {
       type: Object as PropType<UserProps>,
       required: true
+    }
+  },
+  setup() {
+    const store = useStore()
+    const logout = () => {
+      store.commit('logout')
+    }
+    return {
+      logout
     }
   }
 })

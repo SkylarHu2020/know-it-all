@@ -47,7 +47,7 @@ import { defineComponent, ref } from 'vue'
 import ValidateForm from '@/components/ValidateForm.vue'
 import ValidateInput, { RulesProp } from '@/components/ValidateInput.vue'
 import axios from 'axios'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import createMessage from '@/components/createMessage.ts'
 
 export default defineComponent({

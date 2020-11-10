@@ -1,6 +1,12 @@
 import { createStore, Commit } from 'vuex'
 import axios from 'axios'
 
+export interface ResponseType<P = {}> {
+  code: number;
+  msg: string;
+  data: P;
+}
+
 export interface UserProps {
   isLogin: boolean;
   nickName?: string;
@@ -9,7 +15,7 @@ export interface UserProps {
   email?: string;
 }
 
-interface ImageProps {
+export interface ImageProps {
   _id?: string;
   url?: string;
   createdAt?: string;
@@ -23,13 +29,14 @@ export interface ColumnProps {
 }
 
 export interface PostProps {
-  _id: string;
+  _id?: string;
   title: string;
   excerpt?: string;
   content?: string;
-  image?: ImageProps;
-  createdAt: string;
+  image?: ImageProps | string;
+  createdAt?: string;
   column: string;
+  author?: string;
 }
 
 export interface GlobalErrorProps {
@@ -65,9 +72,6 @@ const store = createStore<GlobalDataProps>({
     fetchCurrentUser(state, rawData) {
       state.user = { isLogin: true, ...rawData.data }
     },
-    createPost(state, newPost) {
-      state.posts.push(newPost)
-    },
     fetchColumns(state, rawData) {
       state.columns = rawData.data.list
     },
@@ -77,33 +81,52 @@ const store = createStore<GlobalDataProps>({
     fetchPosts(state, rawData) {
       state.posts = rawData.data.list
     },
+    createPost(state, newPost) {
+      state.posts.push(newPost)
+    },
     setLoading(state, status) {
       state.loading = status
     },
     setError(state, e: GlobalErrorProps) {
       state.error = e
+    },
+    logout(state) {
+      state.token = ''
+      state.user = { isLogin: false }
+      localStorage.removeItem('token')
+      delete axios.defaults.headers.common.Authorization
     }
   },
   actions: {
     async fetchColumns({ commit }) {
       const { data } = await axios.get('/columns')
       commit('fetchColumns', data)
+      return data
     },
     async fetchColumn({ commit }, cid) {
       const { data } = await axios.get(`/columns/${cid}`)
       commit('fetchColumn', data)
+      return data
     },
     async fetchPosts({ commit }, cid) {
       const { data } = await axios.get(`/columns/${cid}/posts`)
       commit('fetchPosts', data)
+      return data
+    },
+    async createPost({ commit }, payload) {
+      const { data } = await axios.post('/posts', payload)
+      commit('createPost', data)
+      return data
     },
     async login({ commit }, payload) {
       const { data } = await axios.post('/user/login', payload)
       commit('login', data)
+      return data
     },
     async fetchCurrentUser({ commit }) {
       const { data } = await axios.get('/user/current')
       commit('fetchCurrentUser', data)
+      return data
     }
   },
   getters: {

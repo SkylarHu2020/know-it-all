@@ -10,19 +10,19 @@ axios.interceptors.request.use(config => {
     ...config.params,
     icode: 'E2809197D1FD7200'
   }
+
   config.data = {
     ...config.data,
     icode: 'E2809197D1FD7200'
   }
+
   store.commit('setLoading', true)
   store.commit('setError', { status: false })
   return config
 })
 
 axios.interceptors.response.use(config => {
-  setTimeout(() => {
-    store.commit('setLoading', false)
-  }, 2000)
+  store.commit('setLoading', false)
   return config
 }, e => {
   const { error } = e.response.data
