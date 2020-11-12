@@ -1,4 +1,4 @@
-import { createStore, Commit } from 'vuex'
+import { createStore } from 'vuex'
 import axios from 'axios'
 
 export interface ResponseType<P = {}> {

@@ -11,10 +11,16 @@ axios.interceptors.request.use(config => {
     icode: 'E2809197D1FD7200'
   }
 
-  config.data = {
-    ...config.data,
-    icode: 'E2809197D1FD7200'
+  if (config.data instanceof FormData) {
+    config.data.append('icode', 'E2809197D1FD7200')
+  } else {
+    config.data = { ...config.data, icode: 'E2809197D1FD7200' }
   }
+
+  // config.data = {
+  //   ...config.data,
+  //   icode: 'E2809197D1FD7200'
+  // }
 
   store.commit('setLoading', true)
   store.commit('setError', { status: false })
