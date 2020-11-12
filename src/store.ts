@@ -13,6 +13,8 @@ export interface UserProps {
   _id?: string;
   column?: string;
   email?: string;
+  avatar?: ImageProps;
+  description?: string;
 }
 
 export interface ImageProps {
@@ -81,6 +83,9 @@ const store = createStore<GlobalDataProps>({
     fetchPosts(state, rawData) {
       state.posts = rawData.data.list
     },
+    fetchPost(state, rawData) {
+      state.posts = [rawData.data]
+    },
     createPost(state, newPost) {
       state.posts.push(newPost)
     },
@@ -113,6 +118,11 @@ const store = createStore<GlobalDataProps>({
       commit('fetchPosts', data)
       return data
     },
+    async fetchPost({ commit }, cid) {
+      const { data } = await axios.get(`/posts/${cid}`)
+      commit('fetchPost', data)
+      return data
+    },
     async createPost({ commit }, payload) {
       const { data } = await axios.post('/posts', payload)
       commit('createPost', data)
@@ -135,6 +145,9 @@ const store = createStore<GlobalDataProps>({
     },
     getPostByCid: (state) => (cid: string) => {
       return state.posts.filter(post => post.column === cid)
+    },
+    getPostById: (state) => (id: string) => {
+      return state.posts.filter(post => id === post._id)[0]
     }
   }
 })

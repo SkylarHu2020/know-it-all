@@ -4,7 +4,7 @@
       <div class="card h-100 shadow-sm">
         <div class="card-body text-center">
           <img  :src="column.avatar && column.avatar.url" :alt="column.title" class="rounded-circle border border-light my-3" >
-          <h5 class="card-title">{{column.title}}</h5>
+          <h5 class="card-title">{{ column.title }}</h5>
           <p class="card-text text-left">{{column.description}}</p>
           <router-link :to="`/column/${column._id}`" class="btn btn-outline-primary">enter the content</router-link>
         </div>
