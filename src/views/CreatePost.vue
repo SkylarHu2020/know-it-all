@@ -1,9 +1,10 @@
 <template>
   <div class="create-post-page">
-    <h4>New Essay</h4>
+    <h4>{{ isEditMode ? 'Edit Essay' : 'Create Essay' }}</h4>
     <uploader
       action="/upload"
       :beforeUpload="uploadCheck"
+      :uploaded="uploadedData"
       @file-uploaded="handleFileUploaded"
       @file-uploaded-error="onFileUploadedError"
       class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
@@ -43,17 +44,17 @@
         />
       </div>
       <template #submit>
-          <button class="btn btn-primary btn-large">Create</button>
+          <button class="btn btn-primary btn-large">{{ isEditMode ? 'Edit' : 'Create' }}</button>
       </template>
     </validate-form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '../store'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import ValidateForm from '@/components/ValidateForm.vue'
 import ValidateInput, { RulesProp } from '@/components/ValidateInput.vue'
 import Uploader from '@/components/Uploader.vue'
@@ -68,8 +69,11 @@ export default defineComponent({
     Uploader
   },
   setup() {
+    const uploadedData = ref()
     const store = useStore<GlobalDataProps>()
     const router = useRouter()
+    const route = useRoute()
+    const isEditMode = !!route.query.id
     const titleVal = ref('')
     const contentVal = ref('')
     let imageId = ''
@@ -79,6 +83,18 @@ export default defineComponent({
     const contentRules: RulesProp = [
       { type: 'required', message: 'The content can not be empty' }
     ]
+    onMounted(() => {
+      if (isEditMode) {
+        store.dispatch('fetchPost', route.query.id).then((rawData: ResponseType<PostProps>) => {
+          const currentPost = rawData.data
+          if (currentPost.image) {
+            uploadedData.value = { data: currentPost.image }
+          }
+          titleVal.value = currentPost.title
+          contentVal.value = currentPost.content || ''
+        })
+      }
+    })
     const handleFileUploaded = (rawData: ResponseType<ImageProps>) => {
       if (rawData.data._id) {
         imageId = rawData.data._id
@@ -97,7 +113,12 @@ export default defineComponent({
           if (imageId) {
             newPost.image = imageId
           }
-          store.dispatch('createPost', newPost).then(() => {
+          const actionName = isEditMode ? 'updatePost' : 'createPost'
+          const sendData = isEditMode ? {
+            id: route.query.id,
+            payload: newPost
+          } : newPost
+          store.dispatch(actionName, sendData).then(() => {
             createMessage('Post successfully!', 'success')
             setTimeout(() => {
               router.push({ name: 'column', params: { id: column } })
@@ -128,7 +149,9 @@ export default defineComponent({
       onFormSubmit,
       handleFileUploaded,
       onFileUploadedError,
-      uploadCheck
+      uploadCheck,
+      uploadedData,
+      isEditMode
     }
   }
 })

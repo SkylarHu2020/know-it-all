@@ -10,6 +10,10 @@
         <span class="text-muted col text-right font-italic">released at: {{ currentPost.createdAt }}</span>
       </div>
       <div v-html="currentHTML"></div>
+      <div v-if="showEditArea" class="btn-group mt-5">
+        <router-link :to="{ name: 'create', query: { id: currentPost._id } }" type="button" class="btn btn-success">Edit</router-link>
+        <button type="button" class="btn btn-danger">Delete</button>
+      </div>
     </article>
   </div>
 
@@ -20,7 +24,7 @@ import { defineComponent, onMounted, computed } from 'vue'
 import UserProfile from '@/components/UserProfile.vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { GlobalDataProps, PostProps, ImageProps } from '../store'
+import { GlobalDataProps, PostProps, ImageProps, UserProps } from '../store'
 
 export default defineComponent({
   name: 'post-detail',
@@ -46,6 +50,15 @@ export default defineComponent({
       // }
       return currentPost.value.content
     })
+    const showEditArea = computed(() => {
+      const { isLogin, _id } = store.state.user
+      if (currentPost.value && currentPost.value.author && isLogin) {
+        const postAuthor = currentPost.value.author as UserProps
+        return postAuthor._id === _id
+      } else {
+        return false
+      }
+    })
     const currentImageUrl = computed(() => {
       if (currentPost.value && currentPost.value.image) {
         const { image } = currentPost.value
@@ -57,7 +70,8 @@ export default defineComponent({
     return {
       currentPost,
       currentImageUrl,
-      currentHTML
+      currentHTML,
+      showEditArea
     }
   }
 })

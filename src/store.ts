@@ -38,7 +38,7 @@ export interface PostProps {
   image?: ImageProps | string;
   createdAt?: string;
   column: string;
-  author?: string;
+  author?: string | UserProps;
 }
 
 export interface GlobalErrorProps {
@@ -100,6 +100,14 @@ const store = createStore<GlobalDataProps>({
       state.user = { isLogin: false }
       localStorage.removeItem('token')
       delete axios.defaults.headers.common.Authorization
+    },
+    updatePost(state, { data }) {
+      state.posts = state.posts.map(post => {
+        if (post._id === data._id) {
+          return data
+        }
+        return post
+      })
     }
   },
   actions: {
@@ -136,6 +144,11 @@ const store = createStore<GlobalDataProps>({
     async fetchCurrentUser({ commit }) {
       const { data } = await axios.get('/user/current')
       commit('fetchCurrentUser', data)
+      return data
+    },
+    async updatePost({ commit }, { id, payload }) {
+      const { data } = await axios.patch(`/posts/${id}`, payload)
+      commit('updatePost', data)
       return data
     }
   },
