@@ -33,7 +33,7 @@ export default defineComponent({
       store.dispatch('fetchPosts', currentId)
     })
     const column = computed(() => store.getters.getColumnById(currentId))
-    const list = computed(() => store.getters.getPostByCid(currentId))
+    const list = computed(() => store.getters.getPostsByCid(currentId))
     return {
       column,
       list

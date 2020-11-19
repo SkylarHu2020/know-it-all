@@ -43,3 +43,16 @@ export function addColumnAvatar(data: ColumnProps | UserProps, width: number, he
     }
   }
 }
+
+export const arrToObj = <T extends { _id?: string }>(arr: Array<T>) => {
+  return arr.reduce((accumulator, current) => {
+    if (current._id) {
+      accumulator[current._id] = current
+    }
+    return accumulator
+  }, {} as {[key: string]: T})
+}
+
+export const objToArr = <T>(obj: {[key: string]: T}) => {
+  return Object.keys(obj).map(key => obj[key])
+}
