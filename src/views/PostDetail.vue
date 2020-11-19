@@ -1,5 +1,10 @@
 <template>
   <div class="post-detail-page">
+    <modal title="delete essay" :visible="modalIsVisible"
+      @modal-on-close="modalIsVisible = false"
+      @modal-on-confirm="hideAndDelete">
+      <p>Are you sure to delete it?</p>
+    </modal>
     <article class="w-75 mx-auto mb-5 pb-3" v-if="currentPost">
       <img :src="currentImageUrl" :alt="currentPost.title" class="rounded-lg img-fluid my-4" v-if="currentImageUrl">
       <h2 class="mb-4">{{ currentPost.title }}</h2>
@@ -12,7 +17,7 @@
       <div v-html="currentHTML"></div>
       <div v-if="showEditArea" class="btn-group mt-5">
         <router-link :to="{ name: 'create', query: { id: currentPost._id } }" type="button" class="btn btn-success">Edit</router-link>
-        <button type="button" class="btn btn-danger">Delete</button>
+        <button type="button" class="btn btn-danger" @click.prevent="modalIsVisible = true">Delete</button>
       </div>
     </article>
   </div>
@@ -20,20 +25,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, computed } from 'vue'
+import { defineComponent, onMounted, computed, ref } from 'vue'
 import UserProfile from '@/components/UserProfile.vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { GlobalDataProps, PostProps, ImageProps, UserProps } from '../store'
+import { useRoute, useRouter } from 'vue-router'
+import { GlobalDataProps, PostProps, ImageProps, UserProps, ResponseType } from '../store'
+import Modal from '@/components/Modal.vue'
+import createMessage from '@/components/createMessage.ts'
 
 export default defineComponent({
   name: 'post-detail',
   components: {
-    UserProfile
+    UserProfile,
+    Modal
   },
   setup() {
     const store = useStore<GlobalDataProps>()
     const route = useRoute()
+    const router = useRouter()
+    const modalIsVisible = ref(false)
     const currentId = route.params.id
     onMounted(async () => {
       try {
@@ -67,11 +77,30 @@ export default defineComponent({
         return null
       }
     })
+    const hideAndDelete = async () => {
+      modalIsVisible.value = false
+      try {
+        const rawData: ResponseType<PostProps> = await store.dispatch('deletePost', currentId)
+        createMessage('Congradulations, delete successfully!!', 'success', 2000)
+        setTimeout(() => {
+          router.push({
+            name: 'column',
+            params: {
+              id: rawData.data.column
+            }
+          })
+        }, 2000)
+      } catch (err) {
+        console.log(err)
+      }
+    }
     return {
       currentPost,
       currentImageUrl,
       currentHTML,
-      showEditArea
+      showEditArea,
+      modalIsVisible,
+      hideAndDelete
     }
   }
 })

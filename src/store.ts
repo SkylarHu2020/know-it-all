@@ -86,6 +86,9 @@ const store = createStore<GlobalDataProps>({
     fetchPost(state, rawData) {
       state.posts = [rawData.data]
     },
+    deletePost(state, { data }) {
+      state.posts = state.posts.filter(post => post._id !== data._id)
+    },
     createPost(state, newPost) {
       state.posts.push(newPost)
     },
@@ -129,6 +132,11 @@ const store = createStore<GlobalDataProps>({
     async fetchPost({ commit }, cid) {
       const { data } = await axios.get(`/posts/${cid}`)
       commit('fetchPost', data)
+      return data
+    },
+    async deletePost({ commit }, id) {
+      const { data } = await axios.delete(`/posts/${id}`)
+      commit('deletePost', data)
       return data
     },
     async createPost({ commit }, payload) {

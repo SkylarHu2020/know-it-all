@@ -9,6 +9,7 @@
       <li class="list-inline-item">
         <dropdown :title="`Hi ${user.nickName}`">
           <dropdown-item><router-link to="/create" class="dropdown-item">New Essay</router-link></dropdown-item>
+          <dropdown-item><router-link :to="`/column/${user.column}`" class="dropdown-item">My Column</router-link></dropdown-item>
           <dropdown-item><a href="#" class="dropdown-item">Edit Info</a></dropdown-item>
           <dropdown-item><a href="#" class="dropdown-item"><div @click="logout">Sign Out</div></a></dropdown-item>
         </dropdown>
