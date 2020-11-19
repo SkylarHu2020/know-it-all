@@ -13,6 +13,7 @@
     </section>
     <h4 class="font-weight-bold text-center">find something great</h4>
     <column-list :list='list'></column-list>
+    <button class="btn btn-primary mt-2 mb-5 mx-auto btn-block w-25" @click="loadMorePage" v-if="!isLastPage">Load More</button>
   </div>
 </template>
 
@@ -20,6 +21,7 @@
 import { defineComponent, computed, onMounted } from 'vue'
 import ColumnList from '@/components/ColumnList.vue'
 import { useStore } from 'vuex'
+import useLoadMore from '@/hooks/useLoadMore.ts'
 import { GlobalDataProps } from '../store'
 
 export default defineComponent({
@@ -30,11 +32,18 @@ export default defineComponent({
   setup() {
     const store = useStore<GlobalDataProps>()
     const list = computed(() => store.getters.getColumns)
+    const total = computed(() => store.state.columns.total)
+    const currentPage = computed(() => store.state.columns.currentPage)
     onMounted(() => {
-      store.dispatch('fetchColumns')
+      store.dispatch('fetchColumns', {
+        pageSize: 3
+      })
     })
+    const { loadMorePage, isLastPage } = useLoadMore('fetchColumns', total, { pageSize: 3, currentPage: (currentPage.value ? currentPage.value + 1 : 2) })
     return {
-      list
+      list,
+      loadMorePage,
+      isLastPage
     }
   }
 })
