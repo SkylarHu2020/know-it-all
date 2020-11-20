@@ -4,12 +4,14 @@ import { ref, computed, ComputedRef } from 'vue'
 interface LoadParams {
   currentPage: number;
   pageSize: number;
+  cid?: string;
 }
 
-const useLoadMore = (actionName: string, total: ComputedRef<number>, params: LoadParams = { currentPage: 2, pageSize: 5 }) => {
+const useLoadMore = (actionName: string, total: ComputedRef<number>, params: LoadParams = { cid: '', currentPage: 2, pageSize: 5 }) => {
   const store = useStore()
   const currentPage = ref(params.currentPage)
   const requestParams = computed(() => ({
+    cid: params.cid,
     currentPage: currentPage.value,
     pageSize: params.pageSize
   }))

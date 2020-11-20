@@ -56,7 +56,7 @@ export interface GlobalDataProps {
   token: string;
   loading: boolean;
   columns: { data: ListProps<ColumnProps>; currentPage: number; total: number };
-  posts: { data: ListProps<PostProps>; loadedColumns: string[]};
+  posts: { data: ListProps<PostProps>; loadedColumns: ListProps<{ total: number; currentPage: number}>};
   user: UserProps;
 }
 
@@ -66,7 +66,7 @@ const store = createStore<GlobalDataProps>({
     token: localStorage.getItem('token') || '',
     loading: false,
     columns: { data: {}, currentPage: 0, total: 0 },
-    posts: { data: {}, loadedColumns: [] },
+    posts: { data: {}, loadedColumns: {} },
     user: { isLogin: false }
   },
   mutations: {
@@ -91,9 +91,17 @@ const store = createStore<GlobalDataProps>({
     fetchColumn(state, { data }) {
       state.columns.data[data._id] = data
     },
-    fetchPosts(state, { data, cid }) {
-      state.posts.data = { ...state.posts.data, ...arrToObj(data.data.list) }
-      state.posts.loadedColumns.push(cid)
+    fetchPosts(state, { rawData, cid }) {
+      const { data } = state.posts
+      const { list, count, currentPage } = rawData.data
+      const currentLoadColumn = {
+        currentPage: currentPage * 1,
+        total: count
+      }
+      state.posts.data = { ...data, ...arrToObj(list) }
+      state.posts.loadedColumns[cid] = currentLoadColumn
+      // state.posts.data = { ...state.posts.data, ...arrToObj(data.data.list) }
+      // state.posts.loadedColumns.push(cid)
     },
     fetchPost(state, { data }) {
       state.posts.data[data._id] = data
@@ -136,10 +144,16 @@ const store = createStore<GlobalDataProps>({
         return data
       }
     },
-    async fetchPosts({ state, commit }, cid) {
-      if (!state.posts.loadedColumns.includes(cid)) {
-        const { data } = await axios.get(`/columns/${cid}/posts`)
-        commit('fetchPosts', { data: data, cid: cid })
+    async fetchPosts({ state, commit }, params = {}) {
+      // if (!state.posts.loadedColumns.includes(cid)) {
+      //   const { data } = await axios.get(`/columns/${cid}/posts`)
+      //   commit('fetchPosts', { data: data, cid: cid })
+      //   return data
+      // }
+      const { cid, currentPage = 1, pageSize = 6 } = params
+      if (!state.posts.loadedColumns[cid] || state.posts.loadedColumns[cid].currentPage < currentPage) {
+        const { data } = await axios.get(`/columns/${cid}/posts?currentPage=${currentPage}&pageSize=${pageSize}`)
+        commit('fetchPosts', { rawData: data, cid })
         return data
       }
     },
