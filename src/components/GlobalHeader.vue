@@ -3,7 +3,7 @@
     <router-link class="navbar-brand" to="/">Know it all</router-link>
     <ul v-if="!user.isLogin" class="list-inline mb-0">
       <li class="list-inline-item"><router-link to="/login" class="btn btn-outline-light my-2">Sign In</router-link></li>
-      <li class="list-inline-item"><router-link to="/login" class="btn btn-outline-light my-2">Sign Up</router-link></li>
+      <li class="list-inline-item"><router-link to="/signup" class="btn btn-outline-light my-2">Sign Up</router-link></li>
     </ul>
     <ul v-else class="list-inline mb-0">
       <li class="list-inline-item">
