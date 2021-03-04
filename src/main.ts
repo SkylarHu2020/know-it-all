@@ -4,17 +4,18 @@ import router from '@/router.ts'
 import store from '@/store.ts'
 import axios from 'axios'
 
+const icode = '4E6F59EF8FD2E843'
 axios.defaults.baseURL = 'http://apis.imooc.com/api/'
 axios.interceptors.request.use(config => {
   config.params = {
     ...config.params,
-    icode: 'E2809197D1FD7200'
+    icode
   }
 
   if (config.data instanceof FormData) {
-    config.data.append('icode', 'E2809197D1FD7200')
+    config.data.append('icode', icode)
   } else {
-    config.data = { ...config.data, icode: 'E2809197D1FD7200' }
+    config.data = { ...config.data, icode }
   }
 
   // config.data = {
